@@ -90,7 +90,7 @@ function jieyushui(arr){
     while(left < right){
         leftMax = Math.max(leftMax,arr[left]);
         rightMax = Math.max(rightMax,arr[right]);
-        if(leftMax < arr[left]){
+        if(leftMax > arr[left]){
             sum+= leftMax - arr[left];
             left++
         }else{
@@ -120,7 +120,7 @@ function longRepeatStr(str){
     for(let i = 0; i < str.length; i++){
         if(temp.indexOf(str[i]) === -1){
             temp.push(str[i]);
-        }else{
+        } else {
             temp.shift();
             i--;
             continue;
@@ -170,4 +170,84 @@ function reverseList(head){
         p2 = next;
     }
     return p1;
+}
+
+function rotateList(head,k){
+    if(!head || (head && !head.next)){
+        return head
+    };
+    let n = 0;
+    let current = head;
+    while(++n && head.next){
+        head = head.next
+    };
+
+    k = k % n;
+
+    while(k--){
+        current = head;
+        if(current.next.next){
+            current = current.next;
+        };
+        current.next.next = head;
+        head = current.next;
+        current.next = null;
+    }
+    return head
+}
+
+
+class Promise{
+    constructor(excutor){
+        this.state = 'pending';
+        this.value = undefined;
+        this.reason = undefined;
+
+        this.onResolveCbs = [];
+        this.onRejectCbs = [];
+
+        let resolve = value=>{
+            if(this.state = 'pending'){
+                this.state = 'fulfilled';
+                this.value = value;
+            }
+
+            this.onResolveCbs.forEach(fn=>fn())
+        }
+
+        let reject = value=>{
+            if(this.state = 'pending'){
+                this.state = 'rejected';
+                this.reason = this.reason;
+            }
+
+            this.onRejectCbs.forEach(fn=>fn())
+        }
+
+        try {
+            excutor(resolve,reject)
+        } catch (error) {
+            throw error
+        }
+    }
+
+    then(onFulfilled,onRejected){
+        if(this.state === 'fulfilled'){
+            onFulfilled(this.value)
+        }
+        if(this.state === 'rejected'){
+            onRejected(this.reason)
+        }
+
+        if(this.state === 'pending'){
+            this.onResolveCbs.push(()=>{
+                onFulfilled(this.value)
+            })
+            this.onRejectCbs.push(()=>{
+                onRejected(this.value)
+            })
+        }
+    }
+
+
 }
